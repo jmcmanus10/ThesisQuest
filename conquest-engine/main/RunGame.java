@@ -32,6 +32,8 @@ import move.AttackTransferMove;
 import move.MoveResult;
 import move.PlaceArmiesMove;
 
+/**
+ * Removed to run locally as per README.md
 import org.bson.types.ObjectId;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
@@ -42,6 +44,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.ServerAddress;
+*/
 
 public class RunGame
 {
@@ -57,7 +60,11 @@ public class RunGame
 
 	Engine engine;
 
-	DB db;
+	/**
+	 * Removed to run locally as per README.md
+	 */
+//	 DB db; 
+	
 
 	public static void main(String args[]) throws Exception
 	{	
@@ -88,8 +95,14 @@ public class RunGame
 		db = new MongoClient("localhost", 27017).getDB("test");
 		
 		//setup the bots
-		bot1 = new IORobot("/opt/aigames/scripts/run_bot.sh aiplayer1 " + bot1Dir);
-		bot2 = new IORobot("/opt/aigames/scripts/run_bot.sh aiplayer2 " + bot2Dir);
+		/**
+		 * Removed to run locally as per README.md
+		 */
+//		bot1 = new IORobot("/opt/aigames/scripts/run_bot.sh aiplayer1 " + bot1Dir);
+//		bot2 = new IORobot("/opt/aigames/scripts/run_bot.sh aiplayer2 " + bot2Dir);
+		
+		bot1 = new IORobot(bot1Dir);
+		bot2 = new IORobot(bot2Dir);
 
 		startingArmies = 5;
 		player1 = new Player(playerName1, bot1, startingArmies);
@@ -465,50 +478,52 @@ public class RunGame
 	 */
 
 	public void saveGame(IORobot bot1, IORobot bot2) {
-
-		Player winner = this.engine.winningPlayer();
-		int score = this.engine.getRoundNr() - 1;
-
-		DBCollection coll = db.getCollection("games");
-
-		DBObject queryDoc = new BasicDBObject()
-			.append("_id", new ObjectId(gameId));
-
-		ObjectId bot1ObjectId = new ObjectId(bot1Id);
-		ObjectId bot2ObjectId = new ObjectId(bot2Id);
-
-		ObjectId winnerId = null;
-		if(winner != null) {
-			winnerId = winner.getName() == playerName1 ? bot1ObjectId : bot2ObjectId;
-		}
-
-		//create game directory
-		String dir = "/var/www/theaigames/public/games/" + gameId;
-		new File(dir).mkdir();
-
-		DBObject updateDoc = new BasicDBObject()
-			.append("$set", new BasicDBObject()
-				.append("winner", winnerId)
-				.append("score", score)
-				.append("visualization", 
-					compressGZip(
-						getPlayedGame(winner, "fullGame") + 
-						getPlayedGame(winner, "player1") + 
-						getPlayedGame(winner, "player2"), 
-						dir + "/visualization"
-					)
-				)
-				.append("errors", new BasicDBObject()
-					.append(bot1Id, compressGZip(bot1.getStderr(), dir + "/bot1Errors"))
-					.append(bot2Id, compressGZip(bot2.getStderr(), dir + "/bot2Errors"))
-				)
-				.append("dump", new BasicDBObject()
-					.append(bot1Id, compressGZip(bot1.getDump(), dir + "/bot1Dump"))
-					.append(bot2Id, compressGZip(bot2.getDump(), dir + "/bot2Dump"))
-				)
-				.append("ranked", 0)
-			);
-		
-		coll.findAndModify(queryDoc, updateDoc);
+/**
+ * Removed for local play as per README.md
+ */
+//		Player winner = this.engine.winningPlayer();
+//		int score = this.engine.getRoundNr() - 1;
+//
+//		DBCollection coll = db.getCollection("games");
+//
+//		DBObject queryDoc = new BasicDBObject()
+//			.append("_id", new ObjectId(gameId));
+//
+//		ObjectId bot1ObjectId = new ObjectId(bot1Id);
+//		ObjectId bot2ObjectId = new ObjectId(bot2Id);
+//
+//		ObjectId winnerId = null;
+//		if(winner != null) {
+//			winnerId = winner.getName() == playerName1 ? bot1ObjectId : bot2ObjectId;
+//		}
+//
+//		//create game directory
+//		String dir = "/var/www/theaigames/public/games/" + gameId;
+//		new File(dir).mkdir();
+//
+//		DBObject updateDoc = new BasicDBObject()
+//			.append("$set", new BasicDBObject()
+//				.append("winner", winnerId)
+//				.append("score", score)
+//				.append("visualization", 
+//					compressGZip(
+//						getPlayedGame(winner, "fullGame") + 
+//						getPlayedGame(winner, "player1") + 
+//						getPlayedGame(winner, "player2"), 
+//						dir + "/visualization"
+//					)
+//				)
+//				.append("errors", new BasicDBObject()
+//					.append(bot1Id, compressGZip(bot1.getStderr(), dir + "/bot1Errors"))
+//					.append(bot2Id, compressGZip(bot2.getStderr(), dir + "/bot2Errors"))
+//				)
+//				.append("dump", new BasicDBObject()
+//					.append(bot1Id, compressGZip(bot1.getDump(), dir + "/bot1Dump"))
+//					.append(bot2Id, compressGZip(bot2.getDump(), dir + "/bot2Dump"))
+//				)
+//				.append("ranked", 0)
+//			);
+//		
+//		coll.findAndModify(queryDoc, updateDoc);
 	}
 }
